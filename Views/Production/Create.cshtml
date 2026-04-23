@@ -1,0 +1,44 @@
+@model MiniMES_Portfolio.Models.ProductionData
+
+@{
+    ViewData["Title"] = "Add Production Data";
+}
+
+<div class="container mt-4">
+    <h2>เพิ่มข้อมูลการผลิต (Add Production Data)</h2>
+    <hr />
+    
+    <div class="row">
+        <div class="col-md-6">
+            <form asp-action="Create" method="post">
+                <div class="mb-3">
+                    <label asp-for="ProductionDate" class="form-label">วันที่ผลิต</label>
+                    <input asp-for="ProductionDate" type="date" class="form-control" required />
+                </div>
+                
+                <div class="mb-3">
+                    <label asp-for="ProductCode" class="form-label">รหัสสินค้า (Product Code)</label>
+                    <input asp-for="ProductCode" type="text" class="form-control" placeholder="เช่น PCB-001" required />
+                </div>
+                
+                <div class="mb-3">
+                    <label asp-for="TargetQty" class="form-label">ยอดเป้าหมาย (Target)</label>
+                    <input asp-for="TargetQty" type="number" class="form-control" required />
+                </div>
+                
+                <div class="mb-3">
+                    <label asp-for="ActualQty" class="form-label">ยอดที่ทำได้ (Actual)</label>
+                    <input asp-for="ActualQty" type="number" class="form-control" required />
+                </div>
+                
+                <div class="mb-3">
+                    <label asp-for="DefectQty" class="form-label">ยอดของเสีย (Defect)</label>
+                    <input asp-for="DefectQty" type="number" class="form-control" required />
+                </div>
+                
+                <button type="submit" class="btn btn-primary">บันทึกข้อมูล</button>
+                <a asp-action="Index" class="btn btn-secondary">กลับไปหน้าแรก</a>
+            </form>
+        </div>
+    </div>
+</div>

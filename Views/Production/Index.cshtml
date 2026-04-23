@@ -1,0 +1,142 @@
+@model IEnumerable<MiniMES_Portfolio.Models.ProductionData>
+
+@{
+    ViewData["Title"] = "Production Dashboard";
+}
+
+<div class="container mt-4">
+    <h2>สรุปข้อมูลการผลิต (Production Data)</h2>
+    <hr />
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card bg-primary text-white shadow-sm">
+            <div class="card-body text-center">
+                <h6>เป้าหมายรวม (Total Target)</h6>
+                <h3 class="fw-bold">@ViewBag.TotalTarget</h3>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-success text-white shadow-sm">
+            <div class="card-body text-center">
+                <h6>ผลิตได้จริง (Total Actual)</h6>
+                <h3 class="fw-bold">@ViewBag.TotalActual</h3>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-danger text-white shadow-sm">
+            <div class="card-body text-center">
+                <h6>ของเสียรวม (Total Defect)</h6>
+                <h3 class="fw-bold">@ViewBag.TotalDefect</h3>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-info text-white shadow-sm">
+            <div class="card-body text-center">
+                <h6>อัตราของดี (Yield Rate)</h6>
+                <h3 class="fw-bold">@ViewBag.YieldRate %</h3>
+            </div>
+        </div>
+    </div>
+</div>
+<a asp-controller="Production" asp-action="Create" class="btn btn-success mb-3">+ เพิ่มข้อมูลการผลิตใหม่</a>
+<button onclick="exportToCSV()" class="btn btn-outline-secondary mb-3">📁 Export to CSV</button>
+
+<script>
+function exportToCSV() {
+    let csv = 'Date,ProductCode,Target,Actual,Defect\n';
+    @foreach (var item in Model)
+    {
+        <text>csv += '@item.ProductionDate.ToString("yyyy-MM-dd"),@item.ProductCode,@item.TargetQty,@item.ActualQty,@item.DefectQty\n';</text>
+    }
+    
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.setAttribute('hidden', '');
+    a.setAttribute('href', url);
+    a.setAttribute('download', 'Production_Report.csv');
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+}
+</script>
+    <table class="table table-striped table-bordered">
+        <thead class="table-dark">
+            <tr>
+                <th>วันที่</th>
+                <th>รหัสสินค้า</th>
+                <th>เป้าหมาย (Target)</th>
+                <th>ทำได้จริง (Actual)</th>
+                <th>ของเสีย (Defect)</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (!Model.Any())
+            {
+                <tr>
+                    <td colspan="5" class="text-center">ยังไม่มีข้อมูลในระบบ</td>
+                </tr>
+            }
+            else
+            {
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.ProductionDate.ToString("dd/MM/yyyy")</td>
+                        <td>@item.ProductCode</td>
+                        <td>@item.TargetQty</td>
+                        <td>@item.ActualQty</td>
+                        <td class="text-danger">@item.DefectQty</td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>
+<div class="container mt-5 mb-5">
+    <h3>📊 กราฟเปรียบเทียบยอดการผลิต (Actual vs Target)</h3>
+    <canvas id="productionChart" width="400" height="150"></canvas>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // ดึงข้อมูลจาก Model มาแปลงเป็นรูปแบบที่ JavaScript ใช้งานได้
+    const labels = @Html.Raw(Json.Serialize(Model.Select(m => m.ProductionDate.ToString("dd/MM/yyyy")).Reverse()));
+    const targetData = @Html.Raw(Json.Serialize(Model.Select(m => m.TargetQty).Reverse()));
+    const actualData = @Html.Raw(Json.Serialize(Model.Select(m => m.ActualQty).Reverse()));
+
+    const ctx = document.getElementById('productionChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [
+                {
+                    label: 'ยอดทำได้จริง (Actual)',
+                    data: actualData,
+                    backgroundColor: 'rgba(75, 192, 192, 0.6)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1
+                },
+                {
+                    label: 'ยอดเป้าหมาย (Target)',
+                    data: targetData,
+                    backgroundColor: 'rgba(201, 203, 207, 0.6)',
+                    borderColor: 'rgba(201, 203, 207, 1)',
+                    borderWidth: 1
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+</script>

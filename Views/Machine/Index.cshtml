@@ -1,0 +1,46 @@
+@model IEnumerable<MiniMES_Portfolio.Models.MachineStatus>
+
+@{
+    ViewData["Title"] = "Machine Status Monitor";
+}
+
+<div class="container mt-4">
+    <h2>📡 ตรวจสอบสถานะเครื่องจักร (Machine Monitor)</h2>
+    <hr />
+
+    <div class="row mt-4">
+        @foreach (var machine in Model)
+        {
+            // กำหนดสีการ์ดตามสถานะ
+            string cardColor = machine.CurrentStatus switch
+            {
+                "Running" => "bg-success text-white", // สีเขียว
+                "Idle" => "bg-warning text-dark",     // สีเหลือง
+                "Down" => "bg-danger text-white",     // สีแดง
+                _ => "bg-secondary text-white"
+            };
+
+            <div class="col-md-4 mb-4">
+                <div class="card shadow-sm @cardColor">
+                    <div class="card-body">
+                        <h4 class="card-title">@machine.MachineName</h4>
+                        <h5 class="card-text">Status: <strong>@machine.CurrentStatus</strong></h5>
+                        <p class="card-text"><small>อัปเดตล่าสุด: @machine.LastUpdated.ToString("dd/MM/yyyy HH:mm:ss")</small></p>
+                        
+                        <form asp-action="UpdateStatus" method="post" class="mt-3">
+                            <input type="hidden" name="id" value="@machine.Id" />
+                            <div class="input-group">
+                                <select name="newStatus" class="form-select form-select-sm">
+                                    <option value="Running">Running</option>
+                                    <option value="Idle">Idle</option>
+                                    <option value="Down">Down</option>
+                                </select>
+                                <button type="submit" class="btn btn-light btn-sm">อัปเดต</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
