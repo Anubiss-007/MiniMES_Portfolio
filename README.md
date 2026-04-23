@@ -16,6 +16,9 @@ This project is a web-based **Manufacturing Execution System (MES)** dashboard d
 * **Database:** SQLite, Entity Framework Core (EF Core)
 * **Architecture:** MVC (Model-View-Controller)
 
+<img width="1506" height="943" alt="Screenshot 2569-04-23 at 22 44 41" src="https://github.com/user-attachments/assets/c8d67045-2aa5-4e55-b0de-bc7c635015aa" />
+<img width="1499" height="425" alt="Screenshot 2569-04-23 at 22 44 50" src="https://github.com/user-attachments/assets/86e3ff1d-8deb-4e5b-bb36-44098efc8ad4" />
+
 ## 🚀 How to Run Locally
 1. Ensure you have the [.NET SDK](https://dotnet.microsoft.com/) installed on your machine.
 2. Clone this repository:
